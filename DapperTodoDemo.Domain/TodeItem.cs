@@ -6,19 +6,19 @@ using System.Threading.Tasks;
 
 namespace DapperTodoDemo.Domain
 {
-    public class TodeItem
+    public class TodoItem
     {
         public Guid Id { get;private set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public TodoStatus Status { get; set; }
 
-        protected TodeItem()
+        protected TodoItem()
         {
 
         }
 
-        public TodeItem(Guid id,string title,string description)
+        public TodoItem(Guid id,string title,string description)
         {
             Id = id;
             SetTile(title);

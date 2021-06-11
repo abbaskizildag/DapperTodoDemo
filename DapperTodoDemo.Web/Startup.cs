@@ -1,13 +1,12 @@
+using Autofac;
+using AutoMapper;
+using DapperTodoDemo.Application;
+using DapperTodoDemo.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DapperTodoDemo.Web
 {
@@ -20,10 +19,23 @@ namespace DapperTodoDemo.Web
 
         public IConfiguration Configuration { get; }
 
+        public ILifetimeScope AutofacContainer { get; }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
+            //AutoMapper registration
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<TodoItemAutoMapperProfile>();
+            });
+            services.AddSingleton(config.CreateMapper());
+        }
+
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            builder.RegisterModule(new DapperTodoDemoApplicationModule());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,6 +62,9 @@ namespace DapperTodoDemo.Web
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
+                endpoints.MapControllerRoute(
+                    name: "areas",
+                    pattern: "{area:exists}/{controller=Home}/{action=Index}");
             });
         }
     }
